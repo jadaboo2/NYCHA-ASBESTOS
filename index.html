@@ -9,7 +9,7 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Bungee+Tint&display=swap');
         body {
-            background-color: #3c03f7;
+            background-color: orange;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -26,7 +26,7 @@
     text-shadow: 0 0 10px rgba(255, 255, 255, 0.8), 0 0 20px rgba(255, 255, 255, 0.6); 
 }
 
-        h2 {
+        h2, h5 {
             font-family: "Inter", serif;
             font-size: 22px;
             color: white;
@@ -90,7 +90,8 @@ h6{
             border-radius: 10px;
             border: 3px solid;
             margin: 20px;
-            width: 50%;
+            width: 100%;
+            max-width: 700px;
             text-align: left;
             display: flex;
             flex-direction: column;
@@ -111,6 +112,7 @@ h6{
             color: white;
             line-height: 1.6;
             margin: 5px; 
+            font-weight: bold;
         }
 
         #button-container > h3 {
@@ -126,6 +128,83 @@ h6{
             margin-top: 20px;
         }
          
+    /* .filter-container{
+        text-align: center;
+    } */
+
+
+@media (max-width: 480px) {
+    h1 {
+        font-size: 24px;
+    }
+
+    h2, h5 {
+        font-size: 16px;
+        margin: 10px;
+    }
+
+    h3, h4 {
+        font-size: 20px;
+    }
+
+    .ACMbox {
+        padding: 10px;
+        font-size: 14px;
+        width: 100%;
+    }
+
+    .ACMbox h2 {
+        font-size: 18px;
+    }
+
+    select {
+        width: 100%;
+        margin-top: 10px;
+    }
+}
+
+@media (min-width: 481px) and (max-width: 768px) {
+    h1 {
+        font-size: 32px;
+    }
+
+    h2, h5 {
+        font-size: 18px;
+    }
+
+    h3, h4 {
+        font-size: 24px;
+    }
+
+    .ACMbox {
+        font-size: 16px;
+        padding: 15px;
+        width: 90%;
+    }
+
+    select {
+        width: 100%;
+    }
+}
+
+
+@media (min-width: 769px) and (max-width: 1500px) {
+    h1 {
+        font-size: 36px;
+    }
+
+    h2, h5 {
+        font-size: 20px;
+    }
+
+    h3, h4 {
+        font-size: 26px;
+    }
+
+    .ACMbox {
+        width: 80%;
+    }
+}
 
     </style>
 </head>
@@ -136,11 +215,23 @@ h6{
     <h5>How does tar and insulation cause asbestos?</h5>
     <h2>Brooklyn has the most NYCHA residences in the city with asbestos containing materials. 1,536 NYCHA residences in Brooklyn contain ACMs. Tar is often used to coat bricks because it serves as a barrier for moisture thereby maintaing the structure of the projects they are used for. Insulation tends to be used for temperature regulation of pipes to keep them from freezing or losing heat.</h2>
 
-    <div id="button-container">
-        <h6>ACM TYPES</h6>
-        <button class="filter-btn" value="all">All ACMs</button>
-        <button class="filter-btn" value="tar">Tar</button>
-        <button class="filter-btn" value="insulation">Insulation</button>
+    <div id="filter-container" style= "text-align:center; margin:20px";>
+        <label for="borough-filter" style="color:white; font-family:'Inter'; font-weight:bold;">Select Borough:</label>
+        <select id="borough-filter">
+            <option value="all">All Boroughs</option>
+            <option value="Brooklyn">Brooklyn</option>
+            <option value="Bronx">Bronx</option>
+            <option value="Manhattan">Manhattan</option>
+            <option value="Queens">Queens</option>
+            <option value="Staten Island">Staten Island</option>
+        </select>
+    
+        <label for="ACM-filter" style="margin-left: 20px; color:white; font-family:'Inter'; font-weight:bold;">Select ACM Type:</label>
+        <select id="ACM-filter">
+            <option value="all">All ACMs</option>
+            <option value="tar">Tar</option>
+            <option value="insulation">Insulation</option>
+        </select>
     </div>
 
     
@@ -227,35 +318,25 @@ h6{
             showACM(item.borough, item.impact, item.neighborhoods, item.residences, item.zipcodes, item.type);
         });
     }
-    const filterButtons = document.querySelectorAll('.filter-btn');
-    const cards = document.querySelectorAll('.ACMbox');
+    const boroughFilter = document.getElementById('borough-filter');
+    const ACMFilter = document.getElementById('ACM-filter');
 
-    filterButtons.forEach(function(btn) {
-        btn.addEventListener('mouseenter', function() {
-            this.classList.add('hover');
-        });
+    function applyFilters() {
+    const selectedBorough = boroughFilter.value;
+    const selectedACM = ACMFilter.value;
 
-        btn.addEventListener('mouseleave', function() {
-            this.classList.remove('hover');
-        });
-
-        btn.addEventListener('click', function() {
-            filterButtons.forEach(btn_inside => {
-                btn_inside.classList.remove('clicked');
-            });
-            this.classList.add('clicked');
-
-            const filter = this.value;
-            cards.forEach(item => {
-                if (filter === 'all' || item.getAttribute('data-type') === filter) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        });
+    const filteredData = ACMData.filter(item => {
+        const matchesBorough = selectedBorough === "all" || item.borough === selectedBorough;
+        const matchesACM = selectedACM === "all" || item.type === selectedACM;
+        return matchesBorough && matchesACM;
     });
 
+    displayData(filteredData);
+}
+
+
+boroughFilter.addEventListener('change', applyFilters);
+acmFilter.addEventListener('change', applyFilters);
    
 </script>
 </body>
